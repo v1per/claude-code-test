@@ -74,7 +74,9 @@ npm start
 
 ## Testing
 
-This project includes comprehensive integration tests for the infrastructure layer (repositories) using Vitest and a real PostgreSQL database.
+This project includes comprehensive test coverage:
+- **Unit Tests**: Domain entities and application use cases with mocked dependencies
+- **Integration Tests**: Infrastructure layer (repositories) using a real PostgreSQL database
 
 ### Prerequisites for Testing
 
@@ -104,22 +106,79 @@ JWT_SECRET=test-secret-key
 # Run all tests (watch mode)
 npm test
 
-# Run tests once
+# Run all tests once
 npm run test:run
 
 # Run tests with UI
 npm run test:ui
+
+# Run only unit tests (domain + application layers)
+npm run test:run -- --exclude='**/infrastructure/**'
+
+# Run only integration tests (infrastructure layer)
+npm run test:run -- tests/infrastructure
 ```
+
+**Test Counts**:
+- 82 unit tests (domain + application layers)
+- 28 integration tests (infrastructure layer)
+- 110 total tests
 
 ### Test Structure
 
-Integration tests are located in `tests/infrastructure/repositories/`:
-- `user.repository.impl.test.ts` - Tests for UserRepositoryImpl
-- `note.repository.impl.test.ts` - Tests for NoteRepositoryImpl
+**Unit Tests** (domain and application layers):
+- `tests/domain/note/note.entity.test.ts` - Note entity business logic tests
+- `tests/domain/user/user.entity.test.ts` - User entity business logic tests
+- `tests/application/note/use-cases/note.use-cases.test.ts` - Note use case tests with mocked repositories
+- `tests/application/user/use-cases/user.use-cases.test.ts` - User use case tests with mocked repositories
+
+**Integration Tests** (infrastructure layer):
+- `tests/infrastructure/repositories/user.repository.impl.test.ts` - Tests for UserRepositoryImpl
+- `tests/infrastructure/repositories/note.repository.impl.test.ts` - Tests for NoteRepositoryImpl
 
 ### What's Tested
 
-**UserRepositoryImpl**:
+**Domain Layer - Unit Tests**:
+
+*Note Entity*:
+- ✅ Creating notes with validation
+- ✅ Title validation (empty, whitespace, max length)
+- ✅ Content validation (empty, whitespace)
+- ✅ Updating notes (title, content, both)
+- ✅ Authorization checks (isAuthor, verifyAuthorization)
+- ✅ Business rule enforcement
+
+*User Entity*:
+- ✅ Creating users with validation
+- ✅ Email validation and normalization
+- ✅ Password hash validation
+- ✅ Name validation (length constraints)
+- ✅ Updating user properties (name, password hash)
+- ✅ Business rule enforcement
+
+**Application Layer - Unit Tests with Mocks**:
+
+*Note Use Cases*:
+- ✅ Creating notes (with userId assignment)
+- ✅ Updating notes (with authorization checks)
+- ✅ Deleting notes (with authorization checks)
+- ✅ Getting a single note
+- ✅ Getting all notes
+- ✅ Error handling (not found, unauthorized access)
+- ✅ Repository interaction verification
+
+*User Use Cases*:
+- ✅ User sign up (with password hashing, JWT generation)
+- ✅ User sign in (with password verification)
+- ✅ Email normalization (lowercase, trim)
+- ✅ Password strength validation
+- ✅ Duplicate email detection
+- ✅ Invalid credentials handling
+- ✅ JWT token generation with correct payload
+
+**Infrastructure Layer - Integration Tests**:
+
+*UserRepositoryImpl*:
 - ✅ Creating users
 - ✅ Finding users by ID
 - ✅ Finding users by email (case-insensitive)
@@ -127,7 +186,7 @@ Integration tests are located in `tests/infrastructure/repositories/`:
 - ✅ Deleting users
 - ✅ Domain entity mapping
 
-**NoteRepositoryImpl**:
+*NoteRepositoryImpl*:
 - ✅ Creating notes with user ownership
 - ✅ Finding notes by ID
 - ✅ Finding all notes (with ordering)
@@ -499,3 +558,4 @@ User interface (HTTP API):
 - **bcryptjs**: Password hashing
 - **TypeScript**: Type safety
 - **tsx**: TypeScript execution for development
+- **Vitest**: Testing framework for unit and integration tests
