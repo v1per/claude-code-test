@@ -1,13 +1,16 @@
 # Notes REST API
 
-A RESTful API for managing notes built with Node.js, Express, Drizzle ORM, PostgreSQL, and Zod for validation.
+A RESTful API for managing notes built with Node.js, Express, Drizzle ORM, PostgreSQL, and Zod for validation, following **Domain-Driven Design** principles.
 
 ## Features
 
 - Full CRUD operations for notes
+- **Domain-Driven Design (DDD)** architecture
+- Separation of concerns with layered architecture
 - PostgreSQL database with Drizzle ORM
 - Data validation using Zod
 - TypeScript for type safety
+- Dependency injection for loose coupling
 - RESTful API design
 
 ## Prerequisites
@@ -198,26 +201,99 @@ Status codes:
 - 404: Not Found
 - 500: Internal Server Error
 
-## Project Structure
+## Project Structure (Domain-Driven Design)
 
 ```
 .
 ├── src/
-│   ├── db/
-│   │   ├── index.ts         # Database connection
-│   │   ├── schema.ts        # Drizzle schema definitions
-│   │   └── migrate.ts       # Migration runner
-│   ├── routes/
-│   │   └── notes.ts         # Notes route handlers
-│   ├── validators/
-│   │   └── notes.ts         # Zod validation schemas
-│   └── index.ts             # Express app entry point
-├── drizzle/                 # Generated migration files
-├── drizzle.config.ts        # Drizzle configuration
-├── tsconfig.json            # TypeScript configuration
+│   ├── domain/                    # Domain Layer (Business Logic)
+│   │   ├── note/
+│   │   │   ├── note.entity.ts     # Note entity with business rules
+│   │   │   ├── note.repository.ts # Repository interface (port)
+│   │   │   └── note.errors.ts     # Domain-specific errors
+│   │   └── shared/
+│   │       └── result.ts          # Result type for error handling
+│   │
+│   ├── application/               # Application Layer (Use Cases)
+│   │   └── note/
+│   │       ├── use-cases/
+│   │       │   ├── create-note.use-case.ts
+│   │       │   ├── update-note.use-case.ts
+│   │       │   ├── delete-note.use-case.ts
+│   │       │   ├── get-note.use-case.ts
+│   │       │   └── get-all-notes.use-case.ts
+│   │       └── dtos/
+│   │           ├── create-note.dto.ts
+│   │           ├── update-note.dto.ts
+│   │           └── note-response.dto.ts
+│   │
+│   ├── infrastructure/            # Infrastructure Layer (Technical Details)
+│   │   ├── database/
+│   │   │   ├── schema.ts          # Drizzle schema definitions
+│   │   │   ├── connection.ts      # Database connection
+│   │   │   └── migrate.ts         # Migration runner
+│   │   └── repositories/
+│   │       └── note.repository.impl.ts  # Repository implementation (adapter)
+│   │
+│   ├── presentation/              # Presentation Layer (HTTP/API)
+│   │   ├── controllers/
+│   │   │   └── note.controller.ts # HTTP request handlers
+│   │   ├── routes/
+│   │   │   └── note.routes.ts     # Route definitions
+│   │   ├── middlewares/
+│   │   │   └── validation.middleware.ts
+│   │   └── validators/
+│   │       └── note.validator.ts  # Zod validation schemas
+│   │
+│   ├── config/
+│   │   └── container.ts           # Dependency injection container
+│   │
+│   └── index.ts                   # Application entry point
+│
+├── drizzle/                       # Generated migration files
+├── drizzle.config.ts              # Drizzle configuration
+├── tsconfig.json                  # TypeScript configuration
 ├── package.json
 └── README.md
 ```
+
+## Architecture Overview
+
+This application follows **Domain-Driven Design** principles with a layered architecture:
+
+### 1. Domain Layer
+The core business logic layer, containing:
+- **Entities**: Business objects with identity (Note entity)
+- **Repository Interfaces**: Contracts for data persistence (ports)
+- **Domain Errors**: Business-specific exceptions
+- **Business Rules**: Validation and invariants enforced by entities
+
+### 2. Application Layer
+Orchestrates business operations:
+- **Use Cases**: Application-specific business rules and workflows
+- **DTOs**: Data Transfer Objects for input/output
+- Coordinates between domain and infrastructure layers
+
+### 3. Infrastructure Layer
+Technical implementation details:
+- **Database**: Schema definitions and connections
+- **Repository Implementations**: Concrete implementations of domain repository interfaces (adapters)
+- Persistence and external service integrations
+
+### 4. Presentation Layer
+User interface (HTTP API):
+- **Controllers**: Handle HTTP requests/responses
+- **Routes**: Define API endpoints
+- **Validators**: Input validation using Zod
+- **Middlewares**: Cross-cutting concerns (validation, error handling)
+
+### Benefits of This Architecture
+
+- **Separation of Concerns**: Each layer has a single responsibility
+- **Testability**: Layers can be tested independently
+- **Maintainability**: Changes in one layer don't affect others
+- **Flexibility**: Easy to swap implementations (e.g., different databases)
+- **Domain-Centric**: Business logic is independent of technical details
 
 ## Scripts
 

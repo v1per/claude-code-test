@@ -1,6 +1,12 @@
+/**
+ * Application Entry Point
+ * Bootstraps the Express application with DDD architecture
+ */
+
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
-import notesRouter from './routes/notes.js';
+import { container } from './config/container.js';
+import { createNoteRouter } from './presentation/routes/note.routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -16,15 +22,17 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req: Request, res: Response) => {
   res.json({
     message: 'Notes API is running',
-    version: '1.0.0',
+    version: '2.0.0',
+    architecture: 'Domain-Driven Design',
     endpoints: {
       notes: '/api/notes',
     },
   });
 });
 
-// Routes
-app.use('/api/notes', notesRouter);
+// Routes - Inject dependencies through container
+const noteRouter = createNoteRouter(container.noteController);
+app.use('/api/notes', noteRouter);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -38,4 +46,5 @@ app.use((req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(`API endpoints available at http://localhost:${PORT}/api/notes`);
+  console.log('Architecture: Domain-Driven Design');
 });

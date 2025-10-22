@@ -1,3 +1,8 @@
+/**
+ * Note Validators
+ * Presentation concern - validates incoming HTTP requests
+ */
+
 import { z } from 'zod';
 
 export const createNoteSchema = z.object({

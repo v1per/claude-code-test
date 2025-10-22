@@ -1,3 +1,8 @@
+/**
+ * Database Schema Definition
+ * Infrastructure concern - maps domain entities to database tables
+ */
+
 import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const notes = pgTable('notes', {
@@ -8,5 +13,5 @@ export const notes = pgTable('notes', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export type Note = typeof notes.$inferSelect;
-export type NewNote = typeof notes.$inferInsert;
+export type NoteRecord = typeof notes.$inferSelect;
+export type NewNoteRecord = typeof notes.$inferInsert;
