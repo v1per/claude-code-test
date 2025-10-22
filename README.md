@@ -72,6 +72,77 @@ npm run build
 npm start
 ```
 
+## Testing
+
+This project includes comprehensive integration tests for the infrastructure layer (repositories) using Vitest and a real PostgreSQL database.
+
+### Prerequisites for Testing
+
+- PostgreSQL server running locally (default: localhost:5432)
+- Test database will be created automatically
+
+### Setup Test Environment
+
+1. Copy the test environment file:
+```bash
+cp .env.test.example .env.test
+```
+
+2. Update `.env.test` with your PostgreSQL credentials if different from defaults:
+```
+TEST_DB_NAME=notes_db_test
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+JWT_SECRET=test-secret-key
+```
+
+### Running Tests
+
+```bash
+# Run all tests (watch mode)
+npm test
+
+# Run tests once
+npm run test:run
+
+# Run tests with UI
+npm run test:ui
+```
+
+### Test Structure
+
+Integration tests are located in `tests/infrastructure/repositories/`:
+- `user.repository.impl.test.ts` - Tests for UserRepositoryImpl
+- `note.repository.impl.test.ts` - Tests for NoteRepositoryImpl
+
+### What's Tested
+
+**UserRepositoryImpl**:
+- ✅ Creating users
+- ✅ Finding users by ID
+- ✅ Finding users by email (case-insensitive)
+- ✅ Updating users
+- ✅ Deleting users
+- ✅ Domain entity mapping
+
+**NoteRepositoryImpl**:
+- ✅ Creating notes with user ownership
+- ✅ Finding notes by ID
+- ✅ Finding all notes (with ordering)
+- ✅ Updating notes (title, content, both)
+- ✅ Deleting notes
+- ✅ Foreign key constraints
+- ✅ Domain entity mapping and behavior
+
+### Test Database Management
+
+- Test database is created automatically before tests run
+- Tables are cleaned between tests for isolation
+- Test database is dropped after all tests complete
+- Each test suite runs independently with its own setup/teardown
+
 ## API Endpoints
 
 ### Authentication Endpoints
