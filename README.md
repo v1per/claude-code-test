@@ -143,9 +143,18 @@ Response:
 
 Base URL: `http://localhost:3000/api/notes`
 
+**Authentication Required**: All note endpoints require a valid JWT token in the Authorization header.
+
+**Authorization Rules**:
+- **GET** (List/View): Any authenticated user can view all notes
+- **POST** (Create): Authenticated user automatically becomes the note author
+- **PUT** (Update): Only the author can update their notes
+- **DELETE**: Only the author can delete their notes
+
 #### Get all notes
 ```
 GET /api/notes
+Authorization: Bearer <your-jwt-token>
 ```
 
 Response:
@@ -155,6 +164,7 @@ Response:
   "data": [
     {
       "id": 1,
+      "userId": 1,
       "title": "My Note",
       "content": "Note content here",
       "createdAt": "2025-01-15T10:00:00.000Z",
@@ -164,9 +174,10 @@ Response:
 }
 ```
 
-### Get a single note
+#### Get a single note
 ```
 GET /api/notes/:id
+Authorization: Bearer <your-jwt-token>
 ```
 
 Response:
@@ -175,6 +186,7 @@ Response:
   "success": true,
   "data": {
     "id": 1,
+    "userId": 1,
     "title": "My Note",
     "content": "Note content here",
     "createdAt": "2025-01-15T10:00:00.000Z",
@@ -183,9 +195,10 @@ Response:
 }
 ```
 
-### Create a new note
+#### Create a new note
 ```
 POST /api/notes
+Authorization: Bearer <your-jwt-token>
 Content-Type: application/json
 
 {
@@ -200,6 +213,7 @@ Response:
   "success": true,
   "data": {
     "id": 1,
+    "userId": 1,
     "title": "My New Note",
     "content": "This is the content of my note",
     "createdAt": "2025-01-15T10:00:00.000Z",
@@ -208,9 +222,10 @@ Response:
 }
 ```
 
-### Update a note
+#### Update a note
 ```
 PUT /api/notes/:id
+Authorization: Bearer <your-jwt-token>
 Content-Type: application/json
 
 {
@@ -219,7 +234,7 @@ Content-Type: application/json
 }
 ```
 
-Note: Both fields are optional, but at least one must be provided.
+**Note**: Both fields are optional, but at least one must be provided. Only the note author can update.
 
 Response:
 ```json
@@ -227,6 +242,7 @@ Response:
   "success": true,
   "data": {
     "id": 1,
+    "userId": 1,
     "title": "Updated Title",
     "content": "Updated content",
     "createdAt": "2025-01-15T10:00:00.000Z",
@@ -235,10 +251,13 @@ Response:
 }
 ```
 
-### Delete a note
+#### Delete a note
 ```
 DELETE /api/notes/:id
+Authorization: Bearer <your-jwt-token>
 ```
+
+**Note**: Only the note author can delete.
 
 Response:
 ```json
@@ -247,6 +266,7 @@ Response:
   "message": "Note deleted successfully",
   "data": {
     "id": 1,
+    "userId": 1,
     "title": "My Note",
     "content": "Note content",
     "createdAt": "2025-01-15T10:00:00.000Z",
@@ -269,7 +289,10 @@ All endpoints return standardized error responses:
 
 Status codes:
 - 400: Bad Request (validation errors)
+- 401: Unauthorized (missing or invalid JWT token)
+- 403: Forbidden (not authorized to perform this action)
 - 404: Not Found
+- 409: Conflict (duplicate email during signup)
 - 500: Internal Server Error
 
 ## Project Structure (Domain-Driven Design)
