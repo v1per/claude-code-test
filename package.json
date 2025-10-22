@@ -1,48 +1,33 @@
 {
-  "name": "notes-api",
+  "name": "notes-app-monorepo",
   "version": "1.0.0",
-  "description": "REST API for managing notes with Express, Drizzle ORM, and PostgreSQL",
-  "main": "dist/index.js",
-  "type": "module",
+  "description": "Monorepo for Notes App - Backend API and Frontend",
+  "private": true,
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:run": "vitest run",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx src/infrastructure/database/migrate.ts",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "dev": "pnpm --filter @notes-app/backend dev",
+    "dev:backend": "pnpm --filter @notes-app/backend dev",
+    "build": "pnpm -r build",
+    "build:backend": "pnpm --filter @notes-app/backend build",
+    "start:backend": "pnpm --filter @notes-app/backend start",
+    "test": "pnpm -r test",
+    "test:backend": "pnpm --filter @notes-app/backend test",
+    "test:run": "pnpm -r test:run",
+    "test:ui": "pnpm --filter @notes-app/backend test:ui",
+    "db:generate": "pnpm --filter @notes-app/backend db:generate",
+    "db:migrate": "pnpm --filter @notes-app/backend db:migrate",
+    "db:push": "pnpm --filter @notes-app/backend db:push",
+    "db:studio": "pnpm --filter @notes-app/backend db:studio"
   },
   "keywords": [
-    "express",
-    "drizzle",
-    "postgres",
-    "rest-api",
-    "zod"
+    "monorepo",
+    "pnpm",
+    "workspace",
+    "notes-app"
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "bcryptjs": "^3.0.2",
-    "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.36.4",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
-    "postgres": "^3.4.4",
-    "zod": "^3.22.4"
-  },
-  "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^20.11.5",
-    "@vitest/ui": "^4.0.1",
-    "drizzle-kit": "^0.28.1",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3",
-    "vitest": "^4.0.1"
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
   }
 }
