@@ -11,9 +11,10 @@ import { NoteResponseDTO } from '../dtos/note-response.dto.js';
 export class CreateNoteUseCase {
   constructor(private readonly noteRepository: INoteRepository) {}
 
-  async execute(dto: CreateNoteDTO): Promise<NoteResponseDTO> {
+  async execute(userId: number, dto: CreateNoteDTO): Promise<NoteResponseDTO> {
     // Create domain entity with business logic validation
     const note = Note.create({
+      userId,
       title: dto.title,
       content: dto.content,
     });
@@ -29,6 +30,7 @@ export class CreateNoteUseCase {
     const noteObj = note.toObject();
     return {
       id: noteObj.id!,
+      userId: noteObj.userId,
       title: noteObj.title,
       content: noteObj.content,
       createdAt: noteObj.createdAt!,

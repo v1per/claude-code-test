@@ -33,6 +33,7 @@ export class NoteRepositoryImpl implements INoteRepository {
     const records = await this.db
       .insert(notes)
       .values({
+        userId: noteObj.userId,
         title: noteObj.title,
         content: noteObj.content,
       })
@@ -80,6 +81,7 @@ export class NoteRepositoryImpl implements INoteRepository {
   private toDomain(record: NoteRecord): Note {
     return Note.create({
       id: record.id,
+      userId: record.userId,
       title: record.title,
       content: record.content,
       createdAt: record.createdAt,

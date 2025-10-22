@@ -22,3 +22,10 @@ export class InvalidNoteContentError extends Error {
     this.name = 'InvalidNoteContentError';
   }
 }
+
+export class UnauthorizedNoteAccessError extends Error {
+  constructor(message: string = 'You are not authorized to perform this action on this note') {
+    super(message);
+    this.name = 'UnauthorizedNoteAccessError';
+  }
+}

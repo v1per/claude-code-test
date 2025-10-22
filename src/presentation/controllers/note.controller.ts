@@ -13,6 +13,7 @@ import {
   NoteNotFoundError,
   InvalidNoteTitleError,
   InvalidNoteContentError,
+  UnauthorizedNoteAccessError,
 } from '../../domain/note/note.errors.js';
 
 export class NoteController {
@@ -62,7 +63,9 @@ export class NoteController {
    */
   async create(req: Request, res: Response): Promise<void> {
     try {
-      const note = await this.createNoteUseCase.execute(req.body);
+      // Get userId from JWT (populated by auth middleware)
+      const userId = req.user!.userId;
+      const note = await this.createNoteUseCase.execute(userId, req.body);
 
       res.status(201).json({
         success: true,
@@ -79,7 +82,9 @@ export class NoteController {
   async update(req: Request, res: Response): Promise<void> {
     try {
       const id = parseInt(req.params.id);
-      const note = await this.updateNoteUseCase.execute(id, req.body);
+      // Get userId from JWT (populated by auth middleware)
+      const userId = req.user!.userId;
+      const note = await this.updateNoteUseCase.execute(id, userId, req.body);
 
       res.json({
         success: true,
@@ -96,7 +101,9 @@ export class NoteController {
   async delete(req: Request, res: Response): Promise<void> {
     try {
       const id = parseInt(req.params.id);
-      const note = await this.deleteNoteUseCase.execute(id);
+      // Get userId from JWT (populated by auth middleware)
+      const userId = req.user!.userId;
+      const note = await this.deleteNoteUseCase.execute(id, userId);
 
       res.json({
         success: true,
@@ -116,6 +123,14 @@ export class NoteController {
 
     if (error instanceof NoteNotFoundError) {
       res.status(404).json({
+        success: false,
+        error: error.message,
+      });
+      return;
+    }
+
+    if (error instanceof UnauthorizedNoteAccessError) {
+      res.status(403).json({
         success: false,
         error: error.message,
       });

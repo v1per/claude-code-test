@@ -25,6 +25,7 @@ export class GetNoteUseCase {
     const noteObj = note.toObject();
     return {
       id: noteObj.id!,
+      userId: noteObj.userId,
       title: noteObj.title,
       content: noteObj.content,
       createdAt: noteObj.createdAt!,

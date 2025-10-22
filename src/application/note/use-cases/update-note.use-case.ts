@@ -12,12 +12,15 @@ import { NoteResponseDTO } from '../dtos/note-response.dto.js';
 export class UpdateNoteUseCase {
   constructor(private readonly noteRepository: INoteRepository) {}
 
-  async execute(id: number, dto: UpdateNoteDTO): Promise<NoteResponseDTO> {
+  async execute(id: number, userId: number, dto: UpdateNoteDTO): Promise<NoteResponseDTO> {
     // Find existing note
     const existingNote = await this.noteRepository.findById(id);
     if (!existingNote) {
       throw new NoteNotFoundError(id);
     }
+
+    // Verify authorization - only author can update
+    existingNote.verifyAuthorization(userId);
 
     // Update using domain logic
     existingNote.update(dto.title, dto.content);
@@ -36,6 +39,7 @@ export class UpdateNoteUseCase {
     const noteObj = note.toObject();
     return {
       id: noteObj.id!,
+      userId: noteObj.userId,
       title: noteObj.title,
       content: noteObj.content,
       createdAt: noteObj.createdAt!,
