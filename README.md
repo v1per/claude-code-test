@@ -4,11 +4,14 @@ A RESTful API for managing notes built with Node.js, Express, Drizzle ORM, Postg
 
 ## Features
 
+- **User Authentication** with JWT tokens
+- User registration and login
 - Full CRUD operations for notes
 - **Domain-Driven Design (DDD)** architecture
 - Separation of concerns with layered architecture
 - PostgreSQL database with Drizzle ORM
 - Data validation using Zod
+- Password hashing with bcryptjs
 - TypeScript for type safety
 - Dependency injection for loose coupling
 - RESTful API design
@@ -32,10 +35,11 @@ npm install
 cp .env.example .env
 ```
 
-4. Update the `.env` file with your PostgreSQL connection string:
+4. Update the `.env` file with your PostgreSQL connection string and JWT secret:
 ```
 DATABASE_URL=postgresql://username:password@localhost:5432/notes_db
 PORT=3000
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 ```
 
 ## Database Setup
@@ -70,9 +74,76 @@ npm start
 
 ## API Endpoints
 
+### Authentication Endpoints
+
+Base URL: `http://localhost:3000/api/auth`
+
+#### Sign Up (User Registration)
+```
+POST /api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "securepassword123",
+  "name": "John Doe"
+}
+```
+
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": 1,
+      "email": "user@example.com",
+      "name": "John Doe",
+      "createdAt": "2025-01-15T10:00:00.000Z"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+#### Sign In (User Login)
+```
+POST /api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "securepassword123"
+}
+```
+
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": 1,
+      "email": "user@example.com",
+      "name": "John Doe",
+      "createdAt": "2025-01-15T10:00:00.000Z"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+**Authentication Notes**:
+- Passwords must be at least 6 characters long
+- Emails are stored in lowercase
+- JWT tokens expire after 7 days
+- Use the returned token in the `Authorization` header for protected routes: `Bearer <token>`
+
+### Notes Endpoints
+
 Base URL: `http://localhost:3000/api/notes`
 
-### Get all notes
+#### Get all notes
 ```
 GET /api/notes
 ```
@@ -211,39 +282,57 @@ Status codes:
 │   │   │   ├── note.entity.ts     # Note entity with business rules
 │   │   │   ├── note.repository.ts # Repository interface (port)
 │   │   │   └── note.errors.ts     # Domain-specific errors
+│   │   ├── user/
+│   │   │   ├── user.entity.ts     # User entity with business rules
+│   │   │   ├── user.repository.ts # Repository interface (port)
+│   │   │   └── user.errors.ts     # Domain-specific errors
 │   │   └── shared/
 │   │       └── result.ts          # Result type for error handling
 │   │
 │   ├── application/               # Application Layer (Use Cases)
-│   │   └── note/
+│   │   ├── note/
+│   │   │   ├── use-cases/
+│   │   │   │   ├── create-note.use-case.ts
+│   │   │   │   ├── update-note.use-case.ts
+│   │   │   │   ├── delete-note.use-case.ts
+│   │   │   │   ├── get-note.use-case.ts
+│   │   │   │   └── get-all-notes.use-case.ts
+│   │   │   └── dtos/
+│   │   │       ├── create-note.dto.ts
+│   │   │       ├── update-note.dto.ts
+│   │   │       └── note-response.dto.ts
+│   │   └── user/
 │   │       ├── use-cases/
-│   │       │   ├── create-note.use-case.ts
-│   │       │   ├── update-note.use-case.ts
-│   │       │   ├── delete-note.use-case.ts
-│   │       │   ├── get-note.use-case.ts
-│   │       │   └── get-all-notes.use-case.ts
+│   │       │   ├── sign-up.use-case.ts
+│   │       │   └── sign-in.use-case.ts
 │   │       └── dtos/
-│   │           ├── create-note.dto.ts
-│   │           ├── update-note.dto.ts
-│   │           └── note-response.dto.ts
+│   │           ├── sign-up.dto.ts
+│   │           ├── sign-in.dto.ts
+│   │           ├── auth-response.dto.ts
+│   │           └── user-response.dto.ts
 │   │
 │   ├── infrastructure/            # Infrastructure Layer (Technical Details)
 │   │   ├── database/
-│   │   │   ├── schema.ts          # Drizzle schema definitions
+│   │   │   ├── schema.ts          # Drizzle schema definitions (users, notes)
 │   │   │   ├── connection.ts      # Database connection
 │   │   │   └── migrate.ts         # Migration runner
 │   │   └── repositories/
-│   │       └── note.repository.impl.ts  # Repository implementation (adapter)
+│   │       ├── note.repository.impl.ts  # Note repository implementation
+│   │       └── user.repository.impl.ts  # User repository implementation
 │   │
 │   ├── presentation/              # Presentation Layer (HTTP/API)
 │   │   ├── controllers/
-│   │   │   └── note.controller.ts # HTTP request handlers
+│   │   │   ├── note.controller.ts # Note HTTP request handlers
+│   │   │   └── user.controller.ts # Auth HTTP request handlers
 │   │   ├── routes/
-│   │   │   └── note.routes.ts     # Route definitions
+│   │   │   ├── note.routes.ts     # Note route definitions
+│   │   │   └── auth.routes.ts     # Auth route definitions
 │   │   ├── middlewares/
-│   │   │   └── validation.middleware.ts
+│   │   │   ├── validation.middleware.ts
+│   │   │   └── auth.middleware.ts # JWT authentication
 │   │   └── validators/
-│   │       └── note.validator.ts  # Zod validation schemas
+│   │       ├── note.validator.ts  # Note Zod validation schemas
+│   │       └── user.validator.ts  # User Zod validation schemas
 │   │
 │   ├── config/
 │   │   └── container.ts           # Dependency injection container
@@ -263,15 +352,16 @@ This application follows **Domain-Driven Design** principles with a layered arch
 
 ### 1. Domain Layer
 The core business logic layer, containing:
-- **Entities**: Business objects with identity (Note entity)
+- **Entities**: Business objects with identity (Note, User entities)
 - **Repository Interfaces**: Contracts for data persistence (ports)
 - **Domain Errors**: Business-specific exceptions
-- **Business Rules**: Validation and invariants enforced by entities
+- **Business Rules**: Validation and invariants enforced by entities (password strength, email format, etc.)
 
 ### 2. Application Layer
 Orchestrates business operations:
-- **Use Cases**: Application-specific business rules and workflows
+- **Use Cases**: Application-specific business rules and workflows (CRUD notes, sign up, sign in)
 - **DTOs**: Data Transfer Objects for input/output
+- JWT token generation and password hashing
 - Coordinates between domain and infrastructure layers
 
 ### 3. Infrastructure Layer
@@ -285,7 +375,7 @@ User interface (HTTP API):
 - **Controllers**: Handle HTTP requests/responses
 - **Routes**: Define API endpoints
 - **Validators**: Input validation using Zod
-- **Middlewares**: Cross-cutting concerns (validation, error handling)
+- **Middlewares**: Cross-cutting concerns (validation, error handling, JWT authentication)
 
 ### Benefits of This Architecture
 
@@ -311,5 +401,7 @@ User interface (HTTP API):
 - **Drizzle ORM**: TypeScript ORM
 - **PostgreSQL**: Database
 - **Zod**: Schema validation
+- **JWT (jsonwebtoken)**: Token-based authentication
+- **bcryptjs**: Password hashing
 - **TypeScript**: Type safety
 - **tsx**: TypeScript execution for development
