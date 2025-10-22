@@ -8,6 +8,13 @@
       "when": 1761052666178,
       "tag": "0000_good_praxagora",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1761170878086,
+      "tag": "0001_chemical_blindfold",
+      "breakpoints": true
     }
   ]
 }

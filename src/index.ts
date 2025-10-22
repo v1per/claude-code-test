@@ -7,6 +7,7 @@ import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { container } from './config/container.js';
 import { createNoteRouter } from './presentation/routes/note.routes.js';
+import { createAuthRouter } from './presentation/routes/auth.routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -25,13 +26,17 @@ app.get('/', (req: Request, res: Response) => {
     version: '2.0.0',
     architecture: 'Domain-Driven Design',
     endpoints: {
+      auth: '/api/auth',
       notes: '/api/notes',
     },
   });
 });
 
 // Routes - Inject dependencies through container
+const authRouter = createAuthRouter(container.userController);
 const noteRouter = createNoteRouter(container.noteController);
+
+app.use('/api/auth', authRouter);
 app.use('/api/notes', noteRouter);
 
 // 404 handler
@@ -45,6 +50,7 @@ app.use((req: Request, res: Response) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-  console.log(`API endpoints available at http://localhost:${PORT}/api/notes`);
+  console.log(`Authentication endpoints: http://localhost:${PORT}/api/auth`);
+  console.log(`Notes endpoints: http://localhost:${PORT}/api/notes`);
   console.log('Architecture: Domain-Driven Design');
 });
