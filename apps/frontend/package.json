@@ -12,6 +12,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/utilities": "^3.2.2",
     "@notes-app/shared": "workspace:*",
     "axios": "^1.7.9",
     "react": "^18.3.1",

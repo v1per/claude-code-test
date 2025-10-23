@@ -12,6 +12,9 @@ export interface Note {
   userId: number;
   title: string;
   content: string;
+  color: string;
+  positionX: number;
+  positionY: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,6 +28,9 @@ export interface NoteResponseDTO {
   userId: number;
   title: string;
   content: string;
+  color: string;
+  positionX: number;
+  positionY: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,9 +38,15 @@ export interface NoteResponseDTO {
 export interface CreateNoteDTO {
   title: string;
   content: string;
+  color?: string;
+  positionX?: number;
+  positionY?: number;
 }
 
 export interface UpdateNoteDTO {
   title?: string;
   content?: string;
+  color?: string;
+  positionX?: number;
+  positionY?: number;
 }

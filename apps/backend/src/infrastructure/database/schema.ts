@@ -24,6 +24,9 @@ export const notes = pgTable('notes', {
   userId: integer('user_id').notNull().references(() => users.id),
   title: text('title').notNull(),
   content: text('content').notNull(),
+  color: text('color').notNull().default('#fef08a'),
+  positionX: integer('position_x').notNull().default(100),
+  positionY: integer('position_y').notNull().default(100),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

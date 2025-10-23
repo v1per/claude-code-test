@@ -23,7 +23,7 @@ export class UpdateNoteUseCase {
     existingNote.verifyAuthorization(userId);
 
     // Update using domain logic
-    existingNote.update(dto.title, dto.content);
+    existingNote.update(dto.title, dto.content, dto.color, dto.positionX, dto.positionY);
 
     // Persist changes
     const updatedNote = await this.noteRepository.update(id, existingNote);
@@ -42,6 +42,9 @@ export class UpdateNoteUseCase {
       userId: noteObj.userId,
       title: noteObj.title,
       content: noteObj.content,
+      color: noteObj.color!,
+      positionX: noteObj.positionX!,
+      positionY: noteObj.positionY!,
       createdAt: noteObj.createdAt!,
       updatedAt: noteObj.updatedAt!,
     };

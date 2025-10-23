@@ -28,6 +28,9 @@ export class GetNoteUseCase {
       userId: noteObj.userId,
       title: noteObj.title,
       content: noteObj.content,
+      color: noteObj.color!,
+      positionX: noteObj.positionX!,
+      positionY: noteObj.positionY!,
       createdAt: noteObj.createdAt!,
       updatedAt: noteObj.updatedAt!,
     };

@@ -36,6 +36,9 @@ export class NoteRepositoryImpl implements INoteRepository {
         userId: noteObj.userId,
         title: noteObj.title,
         content: noteObj.content,
+        color: noteObj.color,
+        positionX: noteObj.positionX,
+        positionY: noteObj.positionY,
       })
       .returning();
 
@@ -50,6 +53,9 @@ export class NoteRepositoryImpl implements INoteRepository {
       .set({
         title: noteObj.title,
         content: noteObj.content,
+        color: noteObj.color,
+        positionX: noteObj.positionX,
+        positionY: noteObj.positionY,
         updatedAt: noteObj.updatedAt,
       })
       .where(eq(notes.id, id))
@@ -84,6 +90,9 @@ export class NoteRepositoryImpl implements INoteRepository {
       userId: record.userId,
       title: record.title,
       content: record.content,
+      color: record.color,
+      positionX: record.positionX,
+      positionY: record.positionY,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
     });

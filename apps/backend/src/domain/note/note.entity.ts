@@ -4,12 +4,16 @@
  */
 
 import { InvalidNoteContentError, InvalidNoteTitleError, UnauthorizedNoteAccessError } from './note.errors.js';
+import { DEFAULT_NOTE_COLOR, DEFAULT_NOTE_POSITION, STICKY_NOTE_COLORS } from '@notes-app/shared';
 
 export interface NoteProps {
   id?: number;
   title: string;
   content: string;
   userId: number;
+  color?: string;
+  positionX?: number;
+  positionY?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -20,6 +24,9 @@ export class Note {
     private _title: string,
     private _content: string,
     private readonly _userId: number,
+    private _color: string,
+    private _positionX: number,
+    private _positionY: number,
     private readonly _createdAt: Date,
     private _updatedAt: Date
   ) {
@@ -35,6 +42,9 @@ export class Note {
       props.title,
       props.content,
       props.userId,
+      props.color || DEFAULT_NOTE_COLOR,
+      props.positionX ?? DEFAULT_NOTE_POSITION.X,
+      props.positionY ?? DEFAULT_NOTE_POSITION.Y,
       props.createdAt || new Date(),
       props.updatedAt || new Date()
     );
@@ -58,6 +68,17 @@ export class Note {
 
     if (!this._userId || this._userId <= 0) {
       throw new Error('User ID is required');
+    }
+
+    // Validate color is a valid hex color
+    const hexColorRegex = /^#[0-9A-Fa-f]{6}$/;
+    if (!hexColorRegex.test(this._color)) {
+      throw new Error('Color must be a valid hex color code (e.g., #fef08a)');
+    }
+
+    // Validate position values are non-negative
+    if (this._positionX < 0 || this._positionY < 0) {
+      throw new Error('Position coordinates must be non-negative');
     }
   }
 
@@ -98,13 +119,41 @@ export class Note {
   /**
    * Update both title and content
    */
-  update(title?: string, content?: string): void {
+  update(title?: string, content?: string, color?: string, positionX?: number, positionY?: number): void {
     if (title !== undefined) {
       this._title = title;
     }
     if (content !== undefined) {
       this._content = content;
     }
+    if (color !== undefined) {
+      this._color = color;
+    }
+    if (positionX !== undefined) {
+      this._positionX = positionX;
+    }
+    if (positionY !== undefined) {
+      this._positionY = positionY;
+    }
+    this._updatedAt = new Date();
+    this.validate();
+  }
+
+  /**
+   * Update note color
+   */
+  updateColor(color: string): void {
+    this._color = color;
+    this._updatedAt = new Date();
+    this.validate();
+  }
+
+  /**
+   * Update note position
+   */
+  updatePosition(positionX: number, positionY: number): void {
+    this._positionX = positionX;
+    this._positionY = positionY;
     this._updatedAt = new Date();
     this.validate();
   }
@@ -126,6 +175,18 @@ export class Note {
     return this._userId;
   }
 
+  get color(): string {
+    return this._color;
+  }
+
+  get positionX(): number {
+    return this._positionX;
+  }
+
+  get positionY(): number {
+    return this._positionY;
+  }
+
   get createdAt(): Date {
     return this._createdAt;
   }
@@ -143,6 +204,9 @@ export class Note {
       title: this._title,
       content: this._content,
       userId: this._userId,
+      color: this._color,
+      positionX: this._positionX,
+      positionY: this._positionY,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
     };

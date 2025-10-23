@@ -15,3 +15,4 @@ export * from './validators/note.validator';
 
 // Constants
 export * from './constants/validation';
+export * from './constants/notes';

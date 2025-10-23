@@ -17,6 +17,9 @@ export class CreateNoteUseCase {
       userId,
       title: dto.title,
       content: dto.content,
+      color: dto.color,
+      positionX: dto.positionX,
+      positionY: dto.positionY,
     });
 
     // Persist through repository
@@ -33,6 +36,9 @@ export class CreateNoteUseCase {
       userId: noteObj.userId,
       title: noteObj.title,
       content: noteObj.content,
+      color: noteObj.color!,
+      positionX: noteObj.positionX!,
+      positionY: noteObj.positionY!,
       createdAt: noteObj.createdAt!,
       updatedAt: noteObj.updatedAt!,
     };
