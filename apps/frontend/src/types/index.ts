@@ -1,65 +1,23 @@
 /**
- * API Response Types
+ * Type Definitions
+ * Re-exports from shared package + frontend-specific types
  */
 
-export interface User {
-  id: number;
-  email: string;
-  name: string;
-  createdAt: string;
-}
-
-export interface Note {
-  id: number;
-  userId: number;
-  title: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface AuthResponse {
-  user: User;
-  token: string;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-  details?: string[];
-}
+// Re-export shared types
+export type {
+  User,
+  Note,
+  AuthResponse,
+  ApiResponse,
+  SignUpDTO as SignUpFormData,
+  SignInDTO as SignInFormData,
+  CreateNoteDTO as CreateNoteFormData,
+  UpdateNoteDTO as UpdateNoteFormData,
+} from '@notes-app/shared';
 
 /**
- * Form Types
+ * Frontend-specific Store Types
  */
-
-export interface SignUpFormData {
-  email: string;
-  password: string;
-  name: string;
-}
-
-export interface SignInFormData {
-  email: string;
-  password: string;
-}
-
-export interface CreateNoteFormData {
-  title: string;
-  content: string;
-}
-
-export interface UpdateNoteFormData {
-  title?: string;
-  content?: string;
-}
-
-/**
- * Store Types
- */
-
 export interface AuthState {
   user: User | null;
   token: string | null;
@@ -68,3 +26,6 @@ export interface AuthState {
   logout: () => void;
   setUser: (user: User) => void;
 }
+
+// Need to import User type for AuthState
+import type { User } from '@notes-app/shared';

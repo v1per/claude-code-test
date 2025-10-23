@@ -1,12 +1,6 @@
 /**
- * Data Transfer Object for note response
+ * Note Response DTO
+ * Re-exports from shared package
  */
 
-export interface NoteResponseDTO {
-  id: number;
-  userId: number;
-  title: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type { NoteResponseDTO } from '@notes-app/shared';

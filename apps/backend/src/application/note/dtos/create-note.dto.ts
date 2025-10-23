@@ -1,8 +1,6 @@
 /**
- * Data Transfer Object for creating a note
+ * Create Note DTO
+ * Re-exports from shared package
  */
 
-export interface CreateNoteDTO {
-  title: string;
-  content: string;
-}
+export type { CreateNoteDTO } from '@notes-app/shared';

@@ -1,13 +1,6 @@
 /**
- * Data Transfer Object for authentication response
+ * Auth Response DTO
+ * Re-exports from shared package
  */
 
-export interface AuthResponseDTO {
-  user: {
-    id: number;
-    email: string;
-    name: string;
-    createdAt: Date;
-  };
-  token: string;
-}
+export type { AuthResponseDTO } from '@notes-app/shared';

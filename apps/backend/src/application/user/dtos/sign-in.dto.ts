@@ -1,8 +1,6 @@
 /**
- * Data Transfer Object for user sign in
+ * Sign In DTO
+ * Re-exports from shared package
  */
 
-export interface SignInDTO {
-  email: string;
-  password: string;
-}
+export type { SignInDTO } from '@notes-app/shared';

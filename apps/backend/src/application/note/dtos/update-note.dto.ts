@@ -1,8 +1,6 @@
 /**
- * Data Transfer Object for updating a note
+ * Update Note DTO
+ * Re-exports from shared package
  */
 
-export interface UpdateNoteDTO {
-  title?: string;
-  content?: string;
-}
+export type { UpdateNoteDTO } from '@notes-app/shared';

@@ -27,6 +27,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@notes-app/shared": "workspace:*",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.36.4",
